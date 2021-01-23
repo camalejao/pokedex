@@ -8,19 +8,23 @@
     />
     <img v-else class="rounded mx-auto" :src="image" :alt="name" />
     <div class="card-body">
-      <span class="text-muted"><small>{{ number }}</small></span>
+      <span class="text-muted">
+        <small>{{ number }}</small>
+      </span>
       <br />
       <span class="card-title">
         {{ name[0].toUpperCase() + name.slice(1) }}
       </span>
       <br />
-      <span
-        v-for="(type, idx) in types"
-        v-bind:key="idx"
-        :class="'badge ' + type"
-      >
-        {{ type.toUpperCase() }}
-      </span>
+      <small>
+        <span
+          v-for="(type, idx) in types"
+          v-bind:key="idx"
+          :class="'badge rounded-pill text-white ' + type"
+        >
+          {{ type.toUpperCase() }}
+        </span>
+      </small>
     </div>
   </div>
 </template>
@@ -77,63 +81,68 @@ export default {
   }
 }
 .card-title {
-  font-size: 1.17em
+  font-size: 1.17em;
+}
+.badge {
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  width: 7em;
 }
 .badge.fire {
-  color: #ee420e;
+  background-color: #ee420e;
 }
 .badge.water {
-  color: #0c67c2;
+  background-color: #0c67c2;
 }
 .badge.grass {
-  color: #3f9f08;
+  background-color: #3f9f08;
 }
 .badge.bug {
-  color: #8e9c11;
+  background-color: #8e9c11;
 }
 .badge.poison {
-  color: #6b246e;
+  background-color: #6b246e;
 }
 .badge.ice {
-  color: #34f0f9;
+  background-color: #34f0f9;
 }
 .badge.normal {
-  color: #ada594;
+  background-color: #ada594;
 }
 .badge.fighting {
-  color: #722c17;
+  background-color: #722c17;
 }
 .badge.electric {
-  color: #fbb917;
+  background-color: #fbb917;
 }
 .badge.flying {
-  color: #9f6ec1;
+  background-color: #9f6ec1;
 }
 .badge.dragon {
-  color: #4e3ba4;
+  background-color: #4e3ba4;
 }
 .badge.rock {
-  color: #9e863d;
+  background-color: #9e863d;
 }
 .badge.ground {
-  color: #ad8c33;
+  background-color: #ad8c33;
 }
 .badge.steel {
-  color: #8e8e9f;
+  background-color: #8e8e9f;
 }
 .badge.ghost {
-  color: #454593;
+  background-color: #454593;
 }
 .badge.fairy {
-  color: #eba1eb;
+  background-color: #eba1eb;
 }
 .badge.psychic {
-  color: #dc3165;
+  background-color: #dc3165;
 }
 .badge.dark {
-  color: #3c2d23;
+  background-color: #3c2d23;
 }
 .badge.loading {
-  color: #b1b1b1;
+  background-color: #b1b1b1;
 }
 </style>
