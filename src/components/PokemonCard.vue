@@ -13,7 +13,7 @@
       </span>
       <br />
       <span class="card-title">
-        {{ name[0].toUpperCase() + name.slice(1) }}
+        {{ capitalName }}
       </span>
       <br />
       <small>
@@ -63,6 +63,9 @@ export default {
       } else {
         return `#${id}`;
       }
+    },
+    capitalName() {
+      return this.name[0].toUpperCase() + this.name.slice(1);
     },
   },
 };
