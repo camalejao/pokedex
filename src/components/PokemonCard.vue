@@ -6,13 +6,22 @@
       :src="require('@/assets/pokeball.png')"
       :alt="name"
     />
-    <img v-else class="rounded mx-auto" :src="image" :alt="name" />
+    <router-link v-else :to="{ name:'pokemon', params: { id } }">
+      <img class="rounded mx-auto" :src="image" :alt="name" />
+    </router-link>
     <div class="card-body">
       <span class="text-muted">
         <small>{{ number }}</small>
       </span>
       <br />
-      <span class="card-title">
+      <router-link
+        v-if="id > 0"
+        class="card-title"
+        :to="{ name:'pokemon', params: { id } }"
+      >
+        {{ capitalName }}
+      </router-link>
+      <span v-else class="card-title">
         {{ capitalName }}
       </span>
       <br />
@@ -85,6 +94,8 @@ export default {
 }
 .card-title {
   font-size: 1.17em;
+  text-decoration: none;
+  color: black;
 }
 .badge {
   margin-left: 0.1em;

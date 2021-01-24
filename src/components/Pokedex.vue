@@ -51,6 +51,7 @@ export default {
           axios.get(p.url).then(({ data }) => {
             let pokemon = this.parsePokemon(data);
             this.$pokedexCache.set(p.name, pokemon);
+            this.$pokedexCache.set(pokemon.id, p.name);
             this.pokedex.set(p.name, pokemon);
           });
         } else {
