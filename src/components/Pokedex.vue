@@ -11,6 +11,9 @@
         <PokemonCard v-else v-bind="loading(p.name)" />
       </div>
     </div>
+    <div v-if="nextCall.length > 0" class="text-center mb-3">
+      <button class="btn btn-outline-dark" @click="fetchMorePokemon()">Load more Pokemon</button>
+    </div>
   </div>
 </template>
 
@@ -26,6 +29,8 @@ export default {
   data() {
     return {
       pokemonList: [],
+      nextCall: "",
+      maxPokemon: 898,
       pokedex: new Map(),
     };
   },
@@ -40,7 +45,11 @@ export default {
           .then(({ data }) => {
             this.pokemonList = data.results;
             this.$pokedexCache.set("results", data.results);
+            this.nextCall = data.next;
             this.fetchPokemonFromList();
+          }).catch(err => {
+            console.log(err);
+            this.fetchPokemonList(); // repeat call in case of error
           });
       }
     },
@@ -50,9 +59,14 @@ export default {
           console.log(`fetching ${p.name}`);
           axios.get(p.url).then(({ data }) => {
             let pokemon = this.parsePokemon(data);
-            this.$pokedexCache.set(p.name, pokemon);
-            this.$pokedexCache.set(pokemon.id, p.name);
-            this.pokedex.set(p.name, pokemon);
+            if (pokemon.id <= this.maxPokemon) {
+              this.$pokedexCache.set(p.name, pokemon);
+              this.$pokedexCache.set(pokemon.id, p.name);
+              this.pokedex.set(p.name, pokemon);
+            }
+          }).catch(err => {
+            console.log(err);
+            this.fetchPokemonFromUrl(p.url);
           });
         } else {
           this.pokedex.set(p.name, this.$pokedexCache.get(p.name));
@@ -79,6 +93,30 @@ export default {
       };
       return p;
     },
+    fetchPokemonFromUrl(url) {
+      axios.get(url).then(({ data }) => {
+        let pokemon = this.parsePokemon(data);
+        this.$pokedexCache.set(pokemon.name, pokemon);
+        this.$pokedexCache.set(pokemon.id, pokemon.name);
+        this.pokedex.set(pokemon.name, pokemon);
+      }).catch(err => {
+        console.log(err);
+        this.fetchPokemonFromUrl(url);
+      });
+    },
+    fetchMorePokemon() {
+      axios.get(this.nextCall).then(({ data }) => {
+        this.pokemonList = this.pokemonList.concat(data.results);
+        this.$pokedexCache.set("results", this.pokemonList);
+        if (this.pokemonList.length < this.maxPokemon) {
+          this.nextCall = data.next;
+        } else {
+          this.nextCall = "";
+          this.pokemonList.length = this.maxPokemon;
+        }
+        this.fetchPokemonFromList();
+      }).catch(err => console.log(err));
+    }
   },
   created() {
     this.fetchPokemonList();
