@@ -1,39 +1,66 @@
 <template>
   <div class="container-xl">
     <h1 v-if="notFound">Pokemon not found :(</h1>
+    
     <div v-else class="card mt-5 shadow">
       <div class="row">
+        <!-- Pokemon image/art -->
         <div class="col-sm-12 col-md-7 col-lg-6">
           <img
-            class="img-fluid rounded mx-auto d-block"
+            class="img-fluid mx-auto d-block"
             :src="image"
             :alt="name"
           />
         </div>
-        <div class="col-md-5 col-lg-6 d-none d-md-block text-center">
-          <h1 class="display-4 mt-5">
-            <strong>{{ name }}</strong>
-          </h1>
-          <h4><span
-            v-for="(type, idx) in pokemon.types"
-            v-bind:key="idx"
-            :class="'badge rounded-pill text-white ' + type"
-          >
-            {{ type.toUpperCase() }}
-          </span></h4>
+
+        <!-- Content in medium to large displays -->
+        <div class="col-sm-12 col-md-5 col-lg-6 d-flex flex-column justify-content-between text-center">
+          <!-- Pokemon name and type(s) -->
+          <div>
+            <h1 class="display-4 mt-5">
+              <strong>{{ name }}</strong>
+            </h1>
+            <h4>
+              <span
+                v-for="(type, idx) in pokemon.types"
+                v-bind:key="idx"
+                :class="'badge rounded-pill text-white ' + type"
+              >
+                {{ type.toUpperCase() }}
+              </span>
+            </h4>
+          </div>
+
+          <!-- Pokemon info (id, height and weight) -->
+          <div>
+            <h5 class="mt-5"><span class="text-muted">{{ number(pokemon.id) }}</span></h5>
+            <h5>Height: {{ pokemon.height/10 }} m</h5>
+            <h5 class="mb-5">Weight: {{ pokemon.weight/10 }} kg</h5>
+          </div>
+
+          <!-- Navigation buttons (prev/next) -->
+          <div class="mb-5">
+            <button
+              v-if="parseInt(id) > 1"
+              @click="navigate(pokemon.id - 1)"
+              class="btn btn-outline-dark h-100 w-sm-50 w-md-25"
+              style="margin-right: 0.1em;"
+            >
+              Prev ({{ number(pokemon.id - 1) }})
+            </button>
+            <button
+              v-if="parseInt(id) < maxPokemon"
+              @click="navigate(pokemon.id + 1)"
+              class="btn btn-outline-dark h-100 w-sm-50 w-md-25"
+              style="margin-left: 0.1em;"
+            >
+              Next ({{ number(pokemon.id + 1) }})
+            </button>
+          </div>
         </div>
       </div>
+
       <div class="card-body">
-        <h1 class="d-block d-md-none display-4 mt-5 text-center">
-          <strong>{{ name }}</strong>
-        </h1>
-        <h4 class="d-block d-md-none text-center"><span
-          v-for="(type, idx) in pokemon.types"
-          v-bind:key="idx"
-          :class="'badge rounded-pill text-white ' + type"
-        >
-          {{ type.toUpperCase() }}
-        </span></h4>
         <!-- <div class="progress">
           <div
             class="progress-bar text-start"
@@ -60,6 +87,7 @@ export default {
     return {
       pokemon: {},
       notFound: false,
+      maxPokemon: 898,
     };
   },
   computed: {
@@ -86,6 +114,20 @@ export default {
     },
   },
   methods: {
+    number(id) {
+      if (id) {
+        id = id.toString();
+        if (id.length == 1) {
+          return `#00${id}`;
+        } else if (id.length == 2) {
+          return `#0${id}`;
+        } else {
+          return `#${id}`;
+        }
+      } else {
+        return '#000';
+      }
+    },
     parsePokemon(data) {
       let pokemon = {
         id: data.id,
@@ -98,26 +140,37 @@ export default {
       };
       return pokemon;
     },
-  },
-  created() {
-    let name = this.$pokedexCache.get(parseInt(this.id));
-    if (name) {
-      this.pokemon = this.$pokedexCache.get(name);
-    } else {
-      axios
-        .get("https://pokeapi.co/api/v2/pokemon/" + this.id)
-        .then(({ data }) => {
-          this.pokemon = this.parsePokemon(data);
-        })
-        .catch((err) => {
-          if (err.response.status === 404) {
-            this.notFound = true;
-          } else {
-            console.log(err);
-          }
-        });
+    navigate(id) {
+      this.$router.push({ name: 'pokemon', params: { id } });
+    },
+    fetchPokemon(id) {
+      let name = this.$pokedexCache.get(parseInt(id));
+      if (name) {
+        this.pokemon = this.$pokedexCache.get(name);
+        console.log(`loaded ${name} from cache`);
+      } else {
+        console.log(`fetching #${id}`);
+        axios
+          .get("https://pokeapi.co/api/v2/pokemon/" + id)
+          .then(({ data }) => {
+            this.pokemon = this.parsePokemon(data);
+          })
+          .catch((err) => {
+            if (err.response.status === 404) {
+              this.notFound = true;
+            } else {
+              console.log(err);
+            }
+          });
+      }
     }
   },
+  created() {
+    this.fetchPokemon(this.id);
+  },
+  beforeRouteUpdate(to) {
+    this.fetchPokemon(to.params.id);
+  }
 };
 </script>
 
