@@ -11,7 +11,7 @@
         <PokemonCard v-else v-bind="loading(p.name)" />
       </div>
     </div>
-    <div v-if="nextCall.length > 0" class="text-center mb-3">
+    <div v-if="pokemonList.length > 0 && pokemonList.length < maxPokemon" class="text-center mb-3">
       <button class="btn btn-outline-dark" @click="fetchMorePokemon()">Load more Pokemon</button>
     </div>
   </div>
@@ -29,7 +29,6 @@ export default {
   data() {
     return {
       pokemonList: [],
-      nextCall: "",
       maxPokemon: 898,
       pokedex: new Map(),
     };
@@ -45,7 +44,6 @@ export default {
           .then(({ data }) => {
             this.pokemonList = data.results;
             this.$pokedexCache.set("results", data.results);
-            this.nextCall = data.next;
             this.fetchPokemonFromList();
           }).catch(err => {
             console.log(err);
@@ -106,7 +104,8 @@ export default {
       });
     },
     fetchMorePokemon() {
-      axios.get(this.nextCall).then(({ data }) => {
+      axios.get(`https://pokeapi.co/api/v2/pokemon?limit=151&offset=${this.pokemonList.length}`)
+      .then(({ data }) => {
         this.pokemonList = this.pokemonList.concat(data.results);
         this.$pokedexCache.set("results", this.pokemonList);
         if (this.pokemonList.length < this.maxPokemon) {
