@@ -2,7 +2,7 @@
   <div class="container-xl">
     <h1 v-if="notFound">Pokemon not found :(</h1>
     
-    <div v-else class="card mt-5 shadow">
+    <div v-else class="card mt-3 shadow">
       <div class="row">
         <!-- Pokemon image/art -->
         <div class="col-sm-12 col-md-7 col-lg-6">
@@ -13,7 +13,7 @@
           />
         </div>
 
-        <!-- Content in medium to large displays -->
+        <!-- Content -->
         <div class="col-sm-12 col-md-5 col-lg-6 d-flex flex-column justify-content-between text-center">
           <!-- Pokemon name and type(s) -->
           <div>

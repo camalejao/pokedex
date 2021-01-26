@@ -1,5 +1,5 @@
 <template>
-  <div class="card h-100 text-center shadow">
+  <div :id="id" class="card h-100 text-center shadow">
     <img
       v-if="currentSrc === null"
       class="placeholder mx-auto"
