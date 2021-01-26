@@ -2,7 +2,7 @@
   <div class="container-xl">
     <h1 v-if="notFound">Pokemon not found :(</h1>
     
-    <div v-else class="card mt-3 shadow">
+    <div v-else class="card mt-3 mb-5 shadow">
       <div class="row">
         <!-- Pokemon image/art -->
         <div class="col-sm-12 col-md-7 col-lg-6">
@@ -61,15 +61,18 @@
       </div>
 
       <div class="card-body">
-        <!-- <div class="progress">
-          <div
-            class="progress-bar text-start"
-            role="progressbar"
-            style="width: 63%"
-          >
-            <span class="m-5">63</span>
+        <div v-for="(s, idx) in pokemon.stats" :key="idx">
+          {{ s.name }}
+          <div class="progress mb-3" style="height: 25px;">
+            <div
+              class="progress-bar text-start"
+              role="progressbar"
+              :style="`width: ${(s.value/160) * 100}%;`"
+            >
+              <span class="m-2">{{ s.value }}</span>
+            </div>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -137,6 +140,9 @@ export default {
         types: data.types.map((t) => t.type.name),
         height: data.height,
         weight: data.weight,
+        stats: data.stats.map((s) => {
+          return { name: s.stat.name, value: s.base_stat }
+        }),
       };
       return pokemon;
     },

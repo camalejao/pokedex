@@ -80,6 +80,9 @@ export default {
         types: data.types.map((t) => t.type.name),
         height: data.height,
         weight: data.weight,
+        stats: data.stats.map((s) => {
+          return { name: s.stat.name, value: s.base_stat }
+        }),
       };
       return pokemon;
     },
