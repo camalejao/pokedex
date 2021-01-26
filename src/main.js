@@ -14,9 +14,9 @@ const router = createRouter({
             return {
                 el: to.hash,
                 behavior: 'smooth',
-            }
+            };
         } else {
-            return { top: 0 };
+            document.getElementById("app").scrollIntoView();
         }
     }
 });
