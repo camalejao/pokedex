@@ -40,7 +40,7 @@ export default {
         this.fetchPokemonFromList();
       } else {
         axios
-          .get("https://pokeapi.co/api/v2/pokemon?limit=151")
+          .get("https://pokeapi.co/api/v2/pokemon?limit=54")
           .then(({ data }) => {
             this.pokemonList = data.results;
             this.$pokedexCache.set("results", data.results);
@@ -107,7 +107,7 @@ export default {
       });
     },
     fetchMorePokemon() {
-      axios.get(`https://pokeapi.co/api/v2/pokemon?limit=151&offset=${this.pokemonList.length}`)
+      axios.get(`https://pokeapi.co/api/v2/pokemon?limit=54&offset=${this.pokemonList.length}`)
       .then(({ data }) => {
         this.pokemonList = this.pokemonList.concat(data.results);
         this.$pokedexCache.set("results", this.pokemonList);
