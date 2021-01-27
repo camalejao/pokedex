@@ -29,7 +29,7 @@
         <span
           v-for="(type, idx) in types"
           v-bind:key="idx"
-          :class="'badge rounded-pill text-white ' + type"
+          :class="'badge badge-type rounded-pill text-white ' + type"
         >
           {{ type.toUpperCase() }}
         </span>
@@ -82,7 +82,10 @@ export default {
 
 <style>
 .placeholder {
-  animation: rotation 2s linear infinite;
+  animation: rotation 3s linear infinite;
+}
+.placeholder-large {
+  animation: rotation 6s linear infinite;
 }
 @keyframes rotation {
   from {
@@ -97,66 +100,66 @@ export default {
   text-decoration: none;
   color: black;
 }
-.badge {
+.badge-type {
   margin-left: 0.1em;
   margin-right: 0.1em;
   width: 7em;
 }
-.badge.fire {
-  background-color: #ee420e;
+.fire {
+  background-color: #ee420e !important;
 }
-.badge.water {
-  background-color: #0c67c2;
+.water {
+  background-color: #0c67c2 !important;
 }
-.badge.grass {
-  background-color: #3f9f08;
+.grass {
+  background-color: #3f9f08 !important;
 }
-.badge.bug {
-  background-color: #8e9c11;
+.bug {
+  background-color: #8e9c11 !important;
 }
-.badge.poison {
-  background-color: #6b246e;
+.poison {
+  background-color: #6b246e !important;
 }
-.badge.ice {
-  background-color: #34f0f9;
+.ice {
+  background-color: #34f0f9 !important;
 }
-.badge.normal {
-  background-color: #ada594;
+.normal {
+  background-color: #ada594 !important;
 }
-.badge.fighting {
-  background-color: #722c17;
+.fighting {
+  background-color: #722c17 !important;
 }
-.badge.electric {
-  background-color: #fbb917;
+.electric {
+  background-color: #fbb917 !important;
 }
-.badge.flying {
-  background-color: #9f6ec1;
+.flying {
+  background-color: #9f6ec1 !important;
 }
-.badge.dragon {
-  background-color: #4e3ba4;
+.dragon {
+  background-color: #4e3ba4 !important;
 }
-.badge.rock {
-  background-color: #9e863d;
+.rock {
+  background-color: #9e863d !important;
 }
-.badge.ground {
-  background-color: #ad8c33;
+.ground {
+  background-color: #ad8c33 !important;
 }
-.badge.steel {
-  background-color: #8e8e9f;
+.steel {
+  background-color: #8e8e9f !important;
 }
-.badge.ghost {
-  background-color: #454593;
+.ghost {
+  background-color: #454593 !important;
 }
-.badge.fairy {
-  background-color: #eba1eb;
+.fairy {
+  background-color: #eba1eb !important;
 }
-.badge.psychic {
-  background-color: #dc3165;
+.psychic {
+  background-color: #dc3165 !important;
 }
-.badge.dark {
-  background-color: #3c2d23;
+.dark {
+  background-color: #3c2d23 !important;
 }
-.badge.loading {
-  background-color: #b1b1b1;
+.loading {
+  background-color: #b1b1b1 !important;
 }
 </style>

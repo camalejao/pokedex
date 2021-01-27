@@ -1,7 +1,16 @@
 <template>
   <div class="container-xl">
     <h1 v-if="notFound">Pokemon not found :(</h1>
-    
+    <div v-else-if="!loaded" class="row mt-5">
+      <div class="col mt-5">
+        <img
+          class="placeholder-large img-fluid mx-auto d-block"
+          style="{ max-width: 300px; max-height: 300px; }"
+          :src="require('@/assets/pokeball-large.png')"
+          :alt="name"
+        />
+      </div>
+    </div>
     <div v-else class="card mt-3 mb-5 shadow">
       <div class="row">
         <!-- Pokemon image/art -->
@@ -24,7 +33,7 @@
               <span
                 v-for="(type, idx) in pokemon.types"
                 v-bind:key="idx"
-                :class="'badge rounded-pill text-white ' + type"
+                :class="'badge badge-type rounded-pill text-white ' + type"
               >
                 {{ type.toUpperCase() }}
               </span>
@@ -61,15 +70,18 @@
       </div>
 
       <div class="card-body">
+        <h4 class="mb-3">Stats</h4>
         <div v-for="(s, idx) in pokemon.stats" :key="idx">
-          {{ s.name }}
-          <div class="progress mb-3" style="height: 25px;">
+          <h6>
+            {{ s.name.toUpperCase() }}
+            <span class="text-muted">{{ s.value }}</span>
+          </h6>
+          <div :class="'progress mb-3'" style="height: 25px;">
             <div
-              class="progress-bar text-start"
+              :class="pokemon.types[0] + ' progress-bar text-start'"
               role="progressbar"
               :style="`width: ${(s.value/160) * 100}%;`"
             >
-              <span class="m-2">{{ s.value }}</span>
             </div>
           </div>
         </div>
@@ -91,6 +103,7 @@ export default {
       pokemon: {},
       notFound: false,
       maxPokemon: 898,
+      loaded: false,
     };
   },
   computed: {
@@ -153,6 +166,7 @@ export default {
       let name = this.$pokedexCache.get(parseInt(id));
       if (name) {
         this.pokemon = this.$pokedexCache.get(name);
+        this.loaded = true;
         console.log(`loaded ${name} from cache`);
       } else {
         console.log(`fetching #${id}`);
@@ -160,6 +174,7 @@ export default {
           .get("https://pokeapi.co/api/v2/pokemon/" + id)
           .then(({ data }) => {
             this.pokemon = this.parsePokemon(data);
+            this.loaded = true;
           })
           .catch((err) => {
             if (err.response.status === 404) {
@@ -175,67 +190,11 @@ export default {
     this.fetchPokemon(this.id);
   },
   beforeRouteUpdate(to) {
+    this.loaded = false;
     this.fetchPokemon(to.params.id);
   }
 };
 </script>
 
 <style>
-.badge.fire {
-  background-color: #ee420e;
-}
-.badge.water {
-  background-color: #0c67c2;
-}
-.badge.grass {
-  background-color: #3f9f08;
-}
-.badge.bug {
-  background-color: #8e9c11;
-}
-.badge.poison {
-  background-color: #6b246e;
-}
-.badge.ice {
-  background-color: #34f0f9;
-}
-.badge.normal {
-  background-color: #ada594;
-}
-.badge.fighting {
-  background-color: #722c17;
-}
-.badge.electric {
-  background-color: #fbb917;
-}
-.badge.flying {
-  background-color: #9f6ec1;
-}
-.badge.dragon {
-  background-color: #4e3ba4;
-}
-.badge.rock {
-  background-color: #9e863d;
-}
-.badge.ground {
-  background-color: #ad8c33;
-}
-.badge.steel {
-  background-color: #8e8e9f;
-}
-.badge.ghost {
-  background-color: #454593;
-}
-.badge.fairy {
-  background-color: #eba1eb;
-}
-.badge.psychic {
-  background-color: #dc3165;
-}
-.badge.dark {
-  background-color: #3c2d23;
-}
-.badge.loading {
-  background-color: #b1b1b1;
-}
 </style>
