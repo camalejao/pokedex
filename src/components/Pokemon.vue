@@ -1,6 +1,14 @@
 <template>
   <div class="container-xl">
-    <h1 v-if="notFound">Pokemon not found :(</h1>
+    <div v-if="notFound" class="text-center">
+      <h1>Pokémon not found :(</h1>
+      <button
+        @click="$router.push({ name: 'home' })"
+        class="btn btn-outline-dark"
+      >
+        Go back
+      </button>
+    </div>
     <div v-else-if="!loaded" class="row mt-5">
       <div class="col mt-5">
         <img
