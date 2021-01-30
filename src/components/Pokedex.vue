@@ -29,6 +29,7 @@ export default {
   data() {
     return {
       pokemonList: [],
+      resultsList: [],
       maxPokemon: 898,
       pokedex: new Map(),
     };
@@ -36,14 +37,17 @@ export default {
   methods: {
     fetchPokemonList() {
       if (this.$pokedexCache.has("results")) {
-        this.pokemonList = this.$pokedexCache.get("results");
+        this.resultsList = this.$pokedexCache.get("results");
+        this.pokemonList = this.$pokedexCache.get("list");
         this.fetchPokemonFromList();
       } else {
         axios
-          .get("https://pokeapi.co/api/v2/pokemon?limit=54")
+          .get("https://pokeapi.co/api/v2/pokemon?limit=" + this.maxPokemon)
           .then(({ data }) => {
-            this.pokemonList = data.results;
+            this.resultsList = data.results;
             this.$pokedexCache.set("results", data.results);
+            this.pokemonList = data.results.slice(0, 54);
+            this.$pokedexCache.set("list", this.pokemonList);
             this.fetchPokemonFromList();
           }).catch(err => {
             console.log(err);
@@ -107,18 +111,11 @@ export default {
       });
     },
     fetchMorePokemon() {
-      axios.get(`https://pokeapi.co/api/v2/pokemon?limit=54&offset=${this.pokemonList.length}`)
-      .then(({ data }) => {
-        this.pokemonList = this.pokemonList.concat(data.results);
-        this.$pokedexCache.set("results", this.pokemonList);
-        if (this.pokemonList.length < this.maxPokemon) {
-          this.nextCall = data.next;
-        } else {
-          this.nextCall = "";
-          this.pokemonList.length = this.maxPokemon;
-        }
-        this.fetchPokemonFromList();
-      }).catch(err => console.log(err));
+      const length = this.pokemonList.length;
+      let morePokemon = this.resultsList.slice(length, length + 54);
+      this.pokemonList = this.pokemonList.concat(morePokemon);
+      this.$pokedexCache.set("list", this.pokemonList);
+      this.fetchPokemonFromList();
     }
   },
   created() {
