@@ -22,8 +22,16 @@
     <div v-else class="card mt-3 mb-5 shadow">
       <div class="row">
         <!-- Pokemon image/art -->
-        <div class="col-sm-12 col-md-7 col-lg-6">
+        <div class="col-sm-12 col-md-7 col-lg-6 text-center">
           <img
+            v-if="currentSrc === null"
+            class="img-fluid mx-auto mb-5 d-block position-relative placeholder-large"
+            style="{ max-width: 200px; max-height: 200px; top: 25%; }"
+            :src="require('@/assets/pokeball-large.png')"
+            :alt="name"
+          />
+          <img
+            v-else
             class="img-fluid mx-auto d-block"
             :src="image"
             :alt="name"
@@ -112,6 +120,7 @@ export default {
       notFound: false,
       maxPokemon: 898,
       loaded: false,
+      currentSrc: null,
     };
   },
   computed: {
@@ -170,12 +179,22 @@ export default {
     navigate(id) {
       this.$router.push({ name: 'pokemon', params: { id } });
     },
+    setOnLoad(img) {
+      let that = this;
+      img.onload = function () {
+        that.currentSrc = that.pokemon.image;
+      };
+      img.src = that.pokemon.image;
+    },
     fetchPokemon(id) {
+      let pokemonImg;
+      pokemonImg = new Image();
       let name = this.$pokedexCache.get(parseInt(id));
       if (name) {
         this.pokemon = this.$pokedexCache.get(name);
         this.loaded = true;
         console.log(`loaded ${name} from cache`);
+        this.setOnLoad(pokemonImg);
       } else {
         console.log(`fetching #${id}`);
         axios
@@ -183,6 +202,7 @@ export default {
           .then(({ data }) => {
             this.pokemon = this.parsePokemon(data);
             this.loaded = true;
+            this.setOnLoad(pokemonImg);
           })
           .catch((err) => {
             if (err.response.status === 404) {
@@ -199,6 +219,7 @@ export default {
   },
   beforeRouteUpdate(to) {
     this.loaded = false;
+    this.currentSrc = null;
     this.fetchPokemon(to.params.id);
   }
 };
