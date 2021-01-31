@@ -3,7 +3,7 @@
   <input
     type="text"
     class="drop-input rounded-3"
-    placeholder="Search Pokémon by their name"
+    placeholder="Search Pokémon by name or number"
     v-model="inputString"
   />
   <div v-show="inputString" class="drop-list shadow-lg rounded-3">
@@ -14,7 +14,7 @@
       class="list-item"
       @click="navigate(r.id)"
     >
-      {{ r.name }}
+      {{ r.name }} <span class="text-muted">&nbsp;({{ formatNumberId(r.id) }})</span>
     </div>
   </div>
 </div>
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     isVisible(item) {
-      let name = item.name.toLowerCase();
+      let name = item.name.toLowerCase() + this.formatNumberId(item.id);
       let input = this.inputString.toLowerCase();
       return name.includes(input);
     },
