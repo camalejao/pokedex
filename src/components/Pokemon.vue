@@ -14,7 +14,7 @@
         <img
           class="placeholder-large img-fluid mx-auto d-block"
           style="{ max-width: 300px; max-height: 300px; }"
-          :src="require('@/assets/pokeball-large.png')"
+          :src="require('@/assets/img/pokeball-large.png')"
           :alt="name"
         />
       </div>
@@ -27,7 +27,7 @@
             v-if="currentSrc === null"
             class="img-fluid mx-auto mb-5 d-block position-relative placeholder-large"
             style="{ max-width: 200px; max-height: 200px; top: 25%; }"
-            :src="require('@/assets/pokeball-large.png')"
+            :src="require('@/assets/img/pokeball-large.png')"
             :alt="name"
           />
           <img
@@ -144,7 +144,7 @@ export default {
       if (Object.keys(this.pokemon).length > 0) {
         return this.pokemon.art;
       } else {
-        return require("@/assets/pokeball.png");
+        return require("@/assets/img/pokeball.png");
       }
     },
   },
