@@ -1,6 +1,7 @@
 <template>
   <div class="">
-    <h1 class="text-center text-dark mb-3"><strong>Pokédex!</strong></h1>
+    <h1 class="text-center text-dark"><strong>Pokédex!</strong></h1>
+    <SearchBar v-if="resultsList" :results="resultsList" />
     <div class="row">
       <div
         v-for="(p, idx) in pokemonList"
@@ -20,11 +21,13 @@
 <script>
 import axios from "axios";
 import PokemonCard from "./PokemonCard";
+import SearchBar from "./SearchBar";
 
 export default {
   name: "Pokedex",
   components: {
     PokemonCard,
+    SearchBar,
   },
   data() {
     return {
@@ -44,9 +47,18 @@ export default {
         axios
           .get("https://pokeapi.co/api/v2/pokemon?limit=" + this.maxPokemon)
           .then(({ data }) => {
-            this.resultsList = data.results;
-            this.$pokedexCache.set("results", data.results);
-            this.pokemonList = data.results.slice(0, 54);
+            let results = data.results.map(p => {
+              let arr = p.url.split('/');
+              let id = parseInt(arr[arr.length - 2]);
+              return {
+                name: p.name,
+                url: p.url,
+                id: id,
+              };
+            });
+            this.resultsList = results;
+            this.$pokedexCache.set("results", results);
+            this.pokemonList = results.slice(0, 54);
             this.$pokedexCache.set("list", this.pokemonList);
             this.fetchPokemonFromList();
           }).catch(err => {
