@@ -108,12 +108,14 @@
 
 <script>
 import axios from "axios";
+import pokemonMixin from "../mixins/pokemonMixin";
 
 export default {
   name: "Pokemon",
   props: {
     id: Number,
   },
+  mixins: [pokemonMixin],
   data() {
     return {
       pokemon: {},
@@ -126,7 +128,7 @@ export default {
   computed: {
     name() {
       if (Object.keys(this.pokemon).length > 0) {
-        return this.pokemon.name[0].toUpperCase() + this.pokemon.name.slice(1);
+        return this.pokemon.name;
       } else {
         return "";
       }
@@ -148,36 +150,7 @@ export default {
   },
   methods: {
     number(id) {
-      if (id) {
-        id = id.toString();
-        if (id.length == 1) {
-          return `#00${id}`;
-        } else if (id.length == 2) {
-          return `#0${id}`;
-        } else {
-          return `#${id}`;
-        }
-      } else {
-        return '#000';
-      }
-    },
-    parsePokemon(data) {
-      let pokemon = {
-        id: data.id,
-        name: data.name,
-        image: data.sprites.front_default,
-        art: data.sprites.other['official-artwork'].front_default,
-        types: data.types.map((t) => t.type.name),
-        height: data.height,
-        weight: data.weight,
-        stats: data.stats.map((s) => {
-          return { name: s.stat.name, value: s.base_stat }
-        }),
-      };
-      return pokemon;
-    },
-    navigate(id) {
-      this.$router.push({ name: 'pokemon', params: { id } });
+      return this.formatNumberId(id.toString());
     },
     setOnLoad(img) {
       let that = this;

@@ -19,10 +19,10 @@
         class="card-title"
         :to="{ name:'pokemon', params: { id } }"
       >
-        {{ capitalName }}
+        {{ name }}
       </router-link>
       <span v-else class="card-title">
-        {{ capitalName }}
+        {{ name }}
       </span>
       <br />
       <small>
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import pokemonMixin from "../mixins/pokemonMixin";
+
 export default {
   name: "PokemonCard",
   props: {
@@ -47,6 +49,7 @@ export default {
     image: String,
     types: Array,
   },
+  mixins: [pokemonMixin],
   data() {
     return {
       currentSrc: null,
@@ -63,18 +66,7 @@ export default {
   },
   computed: {
     number() {
-      let id = this.id.toString();
-      if (!id) return "#000";
-      if (id.length == 1) {
-        return `#00${id}`;
-      } else if (id.length == 2) {
-        return `#0${id}`;
-      } else {
-        return `#${id}`;
-      }
-    },
-    capitalName() {
-      return this.name[0].toUpperCase() + this.name.slice(1);
+      return this.formatNumberId(this.id.toString());
     },
   },
 };

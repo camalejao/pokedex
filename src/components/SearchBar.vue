@@ -21,9 +21,12 @@
 </template>
 
 <script>
+import pokemonMixin from "../mixins/pokemonMixin";
+
 export default {
   name: "SearchBar",
   props: ["results"],
+  mixins: [pokemonMixin],
   data() {
     return {
       inputString: '',
@@ -35,9 +38,6 @@ export default {
       let input = this.inputString.toLowerCase();
       return name.includes(input);
     },
-    navigate(id) {
-      this.$router.push({ name: 'pokemon', params: { id }});
-    }
   }
 };
 </script>

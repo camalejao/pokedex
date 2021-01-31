@@ -22,6 +22,7 @@
 import axios from "axios";
 import PokemonCard from "./PokemonCard";
 import SearchBar from "./SearchBar";
+import pokemonMixin from "../mixins/pokemonMixin";
 
 export default {
   name: "Pokedex",
@@ -29,6 +30,7 @@ export default {
     PokemonCard,
     SearchBar,
   },
+  mixins: [pokemonMixin],
   data() {
     return {
       pokemonList: [],
@@ -51,7 +53,7 @@ export default {
               let arr = p.url.split('/');
               let id = parseInt(arr[arr.length - 2]);
               return {
-                name: p.name,
+                name: this.capitalizeString(p.name),
                 url: p.url,
                 id: id,
               };
@@ -86,21 +88,6 @@ export default {
           this.pokedex.set(p.name, this.$pokedexCache.get(p.name));
         }
       });
-    },
-    parsePokemon(data) {
-      let pokemon = {
-        id: data.id,
-        name: data.name,
-        image: data.sprites.front_default,
-        art: data.sprites.other['official-artwork'].front_default,
-        types: data.types.map((t) => t.type.name),
-        height: data.height,
-        weight: data.weight,
-        stats: data.stats.map((s) => {
-          return { name: s.stat.name, value: s.base_stat }
-        }),
-      };
-      return pokemon;
     },
     loading(name) {
       let p = {
