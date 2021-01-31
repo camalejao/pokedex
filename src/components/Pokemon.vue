@@ -32,7 +32,7 @@
           />
           <img
             v-else
-            class="img-fluid mx-auto d-block"
+            class="img-fluid mx-auto mt-3 d-block"
             :src="image"
             :alt="name"
           />
