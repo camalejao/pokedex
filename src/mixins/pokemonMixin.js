@@ -19,6 +19,7 @@ export default {
         stats: data.stats.map((s) => {
           return { name: s.stat.name, value: s.base_stat }
         }),
+        species_url: data.species.url,
       };
       return pokemon;
     },

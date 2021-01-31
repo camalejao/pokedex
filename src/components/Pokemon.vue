@@ -42,7 +42,7 @@
         <div class="col-sm-12 col-md-5 col-lg-6 d-flex flex-column justify-content-between text-center">
           <!-- Pokemon name and type(s) -->
           <div>
-            <h1 class="display-4 mt-5">
+            <h1 class="display-4 mt-3 mt-md-5">
               <strong>{{ name }}</strong>
             </h1>
             <h4>
@@ -58,13 +58,13 @@
 
           <!-- Pokemon info (id, height and weight) -->
           <div>
-            <h5 class="mt-5"><span class="text-muted">{{ number(pokemon.id) }}</span></h5>
+            <h5 class="mt-3 mt-md-5"><span class="text-muted">{{ number(pokemon.id) }}</span></h5>
             <h5>Height: {{ pokemon.height/10 }} m</h5>
-            <h5 class="mb-5">Weight: {{ pokemon.weight/10 }} kg</h5>
+            <h5 class="mb-3 mb-md-5">Weight: {{ pokemon.weight/10 }} kg</h5>
           </div>
 
           <!-- Navigation buttons (prev/next) -->
-          <div class="mb-5">
+          <div class="mb-3 mb-md-5">
             <button
               v-if="parseInt(id) > 1"
               @click="navigate(pokemon.id - 1)"
@@ -86,6 +86,10 @@
       </div>
 
       <div class="card-body">
+        <h4>Description</h4>
+        <p class="card-text mb-4" style="font-size: 1.1rem">
+          {{ pokedexEntry }}
+        </p>
         <h4 class="mb-3">Stats</h4>
         <div v-for="(s, idx) in pokemon.stats" :key="idx">
           <h6>
@@ -123,6 +127,7 @@ export default {
       maxPokemon: 898,
       loaded: false,
       currentSrc: null,
+      pokedexEntry: '',
     };
   },
   computed: {
@@ -168,6 +173,7 @@ export default {
         this.loaded = true;
         console.log(`loaded ${name} from cache`);
         this.setOnLoad(pokemonImg);
+        this.fetchEntry();
       } else {
         console.log(`fetching #${id}`);
         axios
@@ -176,6 +182,7 @@ export default {
             this.pokemon = this.parsePokemon(data);
             this.loaded = true;
             this.setOnLoad(pokemonImg);
+            this.fetchEntry();
           })
           .catch((err) => {
             if (err.response.status === 404) {
@@ -185,6 +192,14 @@ export default {
             }
           });
       }
+    },
+    fetchEntry() {
+      axios.get(this.pokemon.species_url).then(({data}) => {
+        let entries = data.flavor_text_entries
+          .filter(e => e.language.name === 'en' && !e.flavor_text.includes('\u000c'))
+          .map(e => e.flavor_text);
+        this.pokedexEntry = entries[0];
+      }).catch(err => console.log(err));
     }
   },
   created() {
@@ -193,6 +208,7 @@ export default {
   beforeRouteUpdate(to) {
     this.loaded = false;
     this.currentSrc = null;
+    this.pokedexEntry = '';
     this.fetchPokemon(to.params.id);
   }
 };
