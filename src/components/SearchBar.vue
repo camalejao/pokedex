@@ -5,14 +5,18 @@
     class="drop-input rounded-3"
     placeholder="Search Pokémon by name or number"
     v-model="inputString"
+    @keydown.down="onArrowDown"
+    @keydown.up="onArrowUp"
+    @keyup.enter="onEnter"
   />
-  <div v-show="inputString" class="drop-list shadow-lg rounded-3">
+  <div id="drop-list" v-show="inputString" class="drop-list shadow-lg rounded-3">
     <div
-      v-show="isVisible(r)"
-      v-for="r in results"
+      v-for="(r, i) in filteredResults"
       :key="r.id"
       class="list-item"
+      :class="i == arrowIndex ? 'active-item' : ''"
       @click="navigate(r.id)"
+      @mouseover="onMouseOver(i)"
     >
       {{ r.name }} <span class="text-muted">&nbsp;({{ formatNumberId(r.id) }})</span>
     </div>
@@ -30,14 +34,57 @@ export default {
   data() {
     return {
       inputString: '',
+      arrowIndex: -1,
+    }
+  },
+  computed: {
+    filteredResults() {
+      return this.results.filter(r => {
+        let name = r.name.toLowerCase() + this.formatNumberId(r.id);
+        let input = this.inputString.toLowerCase();
+        this.arrowIndex = -1;
+        return name.includes(input);
+      });
     }
   },
   methods: {
-    isVisible(item) {
-      let name = item.name.toLowerCase() + this.formatNumberId(item.id);
-      let input = this.inputString.toLowerCase();
-      return name.includes(input);
+    onArrowUp() {
+      if (this.arrowIndex >= 0) {
+        this.arrowIndex -= 1;
+        let target = document.getElementsByClassName('active-item')[0];
+        if (target) {
+          let parent = target.parentNode;
+          if (target.offsetTop - parent.scrollTop <= 0)
+            parent.scrollTop -= target.offsetHeight;
+        }
+      } else {
+        this.arrowIndex = this.filteredResults.length - 1;
+        let el = document.getElementById('drop-list');
+        el.scrollTop = el.scrollHeight;
+      }
     },
+    onArrowDown() {
+      if (this.arrowIndex < this.filteredResults.length - 1) {
+        this.arrowIndex += 1;
+        let target = document.getElementsByClassName('active-item')[0];
+        if (target) {
+          let parent = target.parentNode;
+          if (target.offsetTop - parent.scrollTop >= parent.offsetHeight - target.offsetHeight)
+            parent.scrollTop += target.offsetHeight;
+        }
+      } else {
+        this.arrowIndex = -1;
+        document.getElementById('drop-list').scrollTop = 0;
+      }
+    },
+    onEnter() {
+      if (this.arrowIndex >= 0 && this.arrowIndex < this.filteredResults.length) {
+        this.navigate(this.filteredResults[this.arrowIndex].id);
+      }
+    },
+    onMouseOver(i) {
+      this.arrowIndex = i;
+    }
   }
 };
 </script>
@@ -80,6 +127,9 @@ export default {
   cursor: pointer;
 }
 .list-item:hover {
+  background: #edf2f7;
+}
+.active-item {
   background: #edf2f7;
 }
 </style>
