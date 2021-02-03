@@ -182,6 +182,8 @@ export default {
             this.pokemon = this.parsePokemon(data);
             this.loaded = true;
             this.setOnLoad(pokemonImg);
+            this.$pokedexCache.set(this.pokemon.name, this.pokemon);
+            this.$pokedexCache.set(this.pokemon.id, this.pokemon.name);
             this.fetchEntry();
           })
           .catch((err) => {
